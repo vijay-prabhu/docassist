@@ -1,0 +1,95 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven-3.9'
+        jdk 'JDK-21'
+    }
+
+    environment {
+        DOCKER_REGISTRY = 'docassist'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('backend') {
+                    sh 'mvn clean compile -q'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('backend') {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Package') {
+            steps {
+                dir('backend') {
+                    sh 'mvn package -DskipTests -q'
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                script {
+                    def services = ['auth-service', 'document-service', 'ai-service', 'api-gateway']
+                    for (svc in services) {
+                        dir("backend/${svc}") {
+                            sh "docker build -t ${DOCKER_REGISTRY}/${svc}:${BUILD_NUMBER} ."
+                            sh "docker tag ${DOCKER_REGISTRY}/${svc}:${BUILD_NUMBER} ${DOCKER_REGISTRY}/${svc}:latest"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Frontend Build') {
+            steps {
+                dir('frontend') {
+                    sh 'npm ci'
+                    sh 'npx ng build --configuration=production'
+                }
+            }
+        }
+
+        stage('Integration Test') {
+            steps {
+                dir('docker') {
+                    sh 'docker compose up -d'
+                    sh 'sleep 30'
+                    sh 'curl -f http://localhost:8080/api/auth/v3/api-docs || exit 1'
+                    sh 'docker compose down'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
