@@ -1,0 +1,47 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: ai-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/docassist
+    username: docassist
+    password: docassist
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_schema: ai_db
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-placeholder}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.7
+      embedding:
+        options:
+          model: text-embedding-3-small
+    vectorstore:
+      pgvector:
+        dimensions: 1536
+        distance-type: cosine_distance
+        index-type: ivfflat
+        schema-name: ai_db
+  jackson:
+    default-property-inclusion: non_null
+
+app:
+  rag:
+    top-k: 5
+    score-threshold: 0.7
+
+springdoc:
+  api-docs:
+    path: /api/ai/v3/api-docs
+  swagger-ui:
+    path: /api/ai/swagger-ui.html
