@@ -1,12 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  standalone: true,
+  imports: [RouterOutlet, NavbarComponent],
+  template: `
+    <app-navbar />
+    <router-outlet />
+  `,
+  styles: [`:host { display: block; min-height: 100vh; }`]
 })
-export class AppComponent {
-  title = 'frontend';
+export class AppComponent implements OnInit {
+  private authService = inject(AuthService);
+
+  ngOnInit(): void {
+    this.authService.loadCurrentUser();
+  }
 }
