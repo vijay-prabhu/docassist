@@ -5,9 +5,9 @@ spring:
   application:
     name: ai-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/docassist
-    username: docassist
-    password: docassist
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:docassist}
+    username: ${POSTGRES_USER:docassist}
+    password: ${POSTGRES_PASSWORD:docassist}
   jpa:
     hibernate:
       ddl-auto: update

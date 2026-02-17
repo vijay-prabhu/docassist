@@ -5,9 +5,9 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/docassist
-    username: docassist
-    password: docassist
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:docassist}
+    username: ${POSTGRES_USER:docassist}
+    password: ${POSTGRES_PASSWORD:docassist}
   jpa:
     hibernate:
       ddl-auto: update
@@ -21,7 +21,7 @@ spring:
 
 app:
   jwt:
-    secret: dGhpcyBpcyBhIHZlcnkgbG9uZyBzZWNyZXQga2V5IGZvciBkb2Nhc3Npc3QgYXBwbGljYXRpb24gand0IHNpZ25pbmc=
+    secret: ${JWT_SECRET:dGhpcyBpcyBhIHZlcnkgbG9uZyBzZWNyZXQga2V5IGZvciBkb2Nhc3Npc3QgYXBwbGljYXRpb24gand0IHNpZ25pbmc=}
     expiration-ms: 86400000
     refresh-expiration-ms: 604800000
 

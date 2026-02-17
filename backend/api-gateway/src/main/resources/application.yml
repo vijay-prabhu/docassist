@@ -42,7 +42,7 @@ spring:
 
 app:
   jwt:
-    secret: dGhpcyBpcyBhIHZlcnkgbG9uZyBzZWNyZXQga2V5IGZvciBkb2Nhc3Npc3QgYXBwbGljYXRpb24gand0IHNpZ25pbmc=
+    secret: ${JWT_SECRET:dGhpcyBpcyBhIHZlcnkgbG9uZyBzZWNyZXQga2V5IGZvciBkb2Nhc3Npc3QgYXBwbGljYXRpb24gand0IHNpZ25pbmc=}
   security:
     open-paths:
       - /api/auth/register

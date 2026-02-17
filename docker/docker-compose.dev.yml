@@ -2,10 +2,12 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     container_name: docassist-postgres
+    env_file:
+      - ../.env
     environment:
-      POSTGRES_DB: docassist
-      POSTGRES_USER: docassist
-      POSTGRES_PASSWORD: docassist
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
